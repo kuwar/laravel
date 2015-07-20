@@ -14,3 +14,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/upload/csv', function () {
+    return view('csv/upload');
+});
+
+Route::post('/upload/process', 'UploadController@create');
