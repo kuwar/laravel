@@ -39,8 +39,8 @@ class UploadController extends Controller
 
         // setting up rules
         $rules = array(
-            'contract_csv' => 'required',
-            'awarded_csv' => 'required'
+            'contract_csv' => 'required|mimes:csv',
+            'awarded_csv' => 'required|mimes:csv'
         );
 
         // doing the validation, passing post data, rules and the messages
@@ -54,6 +54,8 @@ class UploadController extends Controller
             if ( Input::file('contract_csv')->isValid() && Input::file('awarded_csv')->isValid() ) {
                 $contract_csv = Input::file('contract_csv');
                 $awarded_csv = Input::file('awarded_csv');
+
+                // echo $contract_csv->getClientOriginalExtension(); die; // give csv
 
                 $contract_csv_name = time() . '-' . $contract_csv->getClientOriginalName();
                 $awarded_csv_name = time() . '-' . $awarded_csv->getClientOriginalName();
