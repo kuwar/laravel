@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Input;
 use Validator;
 use Redirect;
+use Session;
 
 class UploadController extends Controller
 {
@@ -33,15 +34,13 @@ class UploadController extends Controller
         // getting file
         $contract_csv = array(
             'contract_csv' => Input::file('contract_csv'),
-            'awarded_csv' => Input::file('awarded_csv'),
-            'first_name' => Input::file('first_name')
+            'awarded_csv' => Input::file('awarded_csv')
         );
 
         // setting up rules
         $rules = array(
-            'contract_csv' => 'required|mimes:csv',
-            'awarded_csv' => 'required|mimes:csv',
-            'first_name' => 'required'
+            'contract_csv' => 'required',
+            'awarded_csv' => 'required'
         );
 
         // doing the validation, passing post data, rules and the messages
@@ -51,19 +50,28 @@ class UploadController extends Controller
             // send back to the page with the input data and errors
             return Redirect::to('upload/csv')->withInput()->withErrors($validator);
         }
+        else {
+            if ( Input::file('contract_csv')->isValid() && Input::file('awarded_csv')->isValid() ) {
+                $contract_csv = Input::file('contract_csv');
+                $awarded_csv = Input::file('awarded_csv');
 
-        /*if (Input::hasFile('contract_csv')){
+                $contract_csv_name = time() . '-' . $contract_csv->getClientOriginalName();
+                $awarded_csv_name = time() . '-' . $awarded_csv->getClientOriginalName();
+                // Moves file to folder on server
+                $contract_csv->move(public_path() . '/uploads/CSV', $contract_csv_name);
+                $awarded_csv->move(public_path() . '/uploads/CSV', $awarded_csv_name);
 
-            $contract_csv = Input::file('contract_csv');
-            $name = time() . '-' . $contract_csv->getClientOriginalName();
-            // Moves file to folder on server
-            $contract_csv->move(public_path() . '/uploads/CSV', $name);
+                Session::flash('success', 'Upload successfully'); 
+                return Redirect::to('upload/csv');
 
-            echo "MOved file";
-
-            return 'Ok'; // return for testing
-
-        }*/
+                return 'Ok'; // return for testing
+            }
+            else {
+                // sending back with error message.
+                Session::flash('error', 'Uploaded file is not valid');
+                return Redirect::to('upload/csv');
+            }
+        }
     }
         
 
