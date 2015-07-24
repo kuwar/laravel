@@ -31,6 +31,21 @@ class UploadController extends Controller
      */
     public function create()
     {
+        // setting different types of mimes for csv file depending on the os
+        $mimes = array('application/vnd.ms-excel','text/plain','text/csv','text/tsv');
+        $csv_mimetypes = array(
+            'text/csv',
+            'text/plain',
+            'application/csv',
+            'text/comma-separated-values',
+            'application/excel',
+            'application/vnd.ms-excel',
+            'application/vnd.msexcel',
+            'text/anytext',
+            'application/octet-stream',
+            'application/txt',
+        );
+
         // getting file
         $contract_csv = array(
             'contract_csv' => Input::file('contract_csv'),
@@ -39,8 +54,8 @@ class UploadController extends Controller
 
         // setting up rules
         $rules = array(
-            'contract_csv' => 'required|mimes:csv',
-            'awarded_csv' => 'required|mimes:csv'
+            'contract_csv' => 'required|mimes:text/plain,text/csv,application/txt,application/octet-stream,text/anytext,application/vnd.msexcel,application/vnd.ms-excel,application/excel,text/comma-separated-values,application/csv',
+            'awarded_csv' => 'required|mimes:text/plain,text/csv,application/txt,application/octet-stream,text/anytext,application/vnd.msexcel,application/vnd.ms-excel,application/excel,text/comma-separated-values,application/csv'
         );
 
         // doing the validation, passing post data, rules and the messages
