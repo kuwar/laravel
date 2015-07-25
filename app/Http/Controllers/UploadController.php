@@ -54,8 +54,8 @@ class UploadController extends Controller
 
         // setting up rules
         $rules = array(
-            'contract_csv' => 'required|mimes:text/plain,text/csv,application/txt,application/octet-stream,text/anytext,application/vnd.msexcel,application/vnd.ms-excel,application/excel,text/comma-separated-values,application/csv',
-            'awarded_csv' => 'required|mimes:text/plain,text/csv,application/txt,application/octet-stream,text/anytext,application/vnd.msexcel,application/vnd.ms-excel,application/excel,text/comma-separated-values,application/csv'
+            'contract_csv' => 'required',
+            'awarded_csv' => 'required'
         );
 
         // doing the validation, passing post data, rules and the messages
@@ -71,12 +71,17 @@ class UploadController extends Controller
                 $awarded_csv = Input::file('awarded_csv');
 
                 // echo $contract_csv->getClientOriginalExtension(); die; // give csv
-
-                $contract_csv_name = time() . '-' . $contract_csv->getClientOriginalName();
-                $awarded_csv_name = time() . '-' . $awarded_csv->getClientOriginalName();
+                $time = time();
+                $contract_csv_name = $time . "_" . $contract_csv->getClientOriginalName();
+                $awarded_csv_name = $time . "_" . $awarded_csv->getClientOriginalName();
                 // Moves file to folder on server
                 $contract_csv->move(public_path() . '/uploads/CSV', $contract_csv_name);
                 $awarded_csv->move(public_path() . '/uploads/CSV', $awarded_csv_name);
+
+                // $this->_check_CSV($contract_csv_name, $awarded_csv_name);
+
+                $combined_data_csv = $this->_concat_CSV($contract_csv_name, $awarded_csv_name);
+
 
                 Session::flash('success', 'Upload successfully'); 
                 return Redirect::to('upload/csv');
@@ -89,6 +94,28 @@ class UploadController extends Controller
                 return Redirect::to('upload/csv');
             }
         }
+    }
+
+    public function _check_CSV($contract_csv, $awarded_csv){
+        $csv_dir = public_path() . '/uploads/CSV/';
+
+    }
+
+    public function _concat_CSV(){
+        $awarded_csv = 'awards.csv';
+        
+
+        $csv_dir = public_path() . '/uploads/CSV/';
+        $contracts_csv = $csv_dir . 'contracts.csv';
+
+        echo readfile($contracts_csv);
+
+        $fp = fopen($contracts_csv, "r");
+
+        // get the header of the files
+        $header = fgetcsv($fp, 0, "\t");
+        print_r($header);
+
     }
         
 

@@ -20,3 +20,5 @@ Route::get('/upload/csv', function () {
 });
 
 Route::post('/upload/process', 'UploadController@create');
+
+Route::get('/concat', 'UploadController@_concat_CSV');
