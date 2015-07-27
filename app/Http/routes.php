@@ -15,6 +15,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/welcome', 'WelcomeController@index');
+
 Route::get('/upload/csv', function () {
     return view('csv/upload');
 });
